@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing fibonacci from c++</title>
+    <style>
+      div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;   
+            margin-top: 10%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="btnExecute" style="font-size:25px;visibility:visible" onclick="onClickExecute()"> EXECUTE FIB(42)</button>
+        <p id="result" style="visibility:hidden;font-size: 25px;"></p>
+        <p id="timeTaken" style="visibility: hidden; font-size: 25px;"></p>
+    </div>
+
+    <script>
+
+        const onClickExecute = () => {
+            document.getElementById("btnExecute").style.visibility = 'hidden';
+            execute();
+        }
+
+        const execute = () => {
+            WebAssembly.instantiateStreaming(fetch('fibonacciFromC++.wasm'))
+            .then(obj => {
+                const startTime = performance.now();
+                const res = obj.instance.exports._Z3fibi(42);
+                console.log('Fib(42)' + res);
+                const endTime = performance.now();
+                const timeTaken = endTime - startTime;
+                console.log(`Time taken in ms: ${timeTaken}`);
+
+                document.getElementById("result").innerHTML = "Result: " + res;
+                document.getElementById("result").style.visibility = 'visible';
+
+                document.getElementById("timeTaken").innerHTML = "Time taken: " + timeTaken + " ms";
+                document.getElementById("timeTaken").style.visibility = 'visible';
+            });
+        }
+     </script>
+</body>
+</html>
